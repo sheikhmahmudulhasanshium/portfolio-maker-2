@@ -1,17 +1,23 @@
 import { Injectable } from '@nestjs/common';
-import { SupabaseClient, createClient } from '@supabase/supabase-js';
 import { ConfigService } from '@nestjs/config';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 @Injectable()
 export class SupabaseService {
   private supabase: SupabaseClient;
 
   constructor(private configService: ConfigService) {
-    const supabaseUrl = this.configService.get<string>('SUPABASE_URL');
-    const supabaseAnonKey = this.configService.get<string>('SUPABASE_ANON_KEY');
+    const supabaseUrl = this.configService.get<string>(
+      'NEXT_PUBLIC_SUPABASE_URL',
+    );
+    const supabaseAnonKey = this.configService.get<string>(
+      'NEXT_PUBLIC_SUPABASE_ANON_KEY',
+    );
 
     if (!supabaseUrl || !supabaseAnonKey) {
-      throw new Error('Missing Supabase environment variables');
+      throw new Error(
+        'Supabase credentials are missing from environment variables',
+      );
     }
 
     this.supabase = createClient(supabaseUrl, supabaseAnonKey);
